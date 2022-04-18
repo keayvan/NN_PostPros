@@ -57,5 +57,5 @@ def ML_model_read_func (nnet, nnet_file, dataset, epoch, seed, noise, nnet_dir =
     
 
     print("Loading model...")
-    model.load_state_dict(th.load("{}_C_{}_{}_s{}_WORT0_model_epoch{}.pth".format(nnet_dir + nnet,dataset,noise, seed,epoch), map_location=th.device('cpu')))
+    model.load_state_dict(th.load("{}_C_{}_{}_s{}_model_epoch{}.pth".format(nnet_dir + nnet,dataset,noise, seed,epoch), map_location=th.device('cpu')))
     return model

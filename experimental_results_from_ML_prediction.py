@@ -17,8 +17,6 @@ from sklearn.metrics import confusion_matrix
 import seaborn as sns
 
 # importing sys
-import sys
-sys.path.insert(0, '../')
 import DenseNet_C
 import ResNet_C
 
@@ -57,17 +55,18 @@ rt3=[24,26,27,45,46,69]
 rt4=[23,48,49,70,71,72] 
 
 rt=rt0+rt1+rt2+rt3+rt4
+rt = [21, 23, 24]
 p_exp_list = []
 n_rt = len(rt)
-n_classes = 4
+n_classes = 5
 RT_Class_list =[]
 real_type_list = []
 test_no_list = []
 probability_matrix  = np.zeros((n_rt, n_classes))
 for index,case in enumerate(rt):
-    test_type, test_properties, sensprs = DAF.func_experimental_tests_parameters("./experimentalData/Tests Description.xlsx", case)
-    exp_path ='exp_norm_07042022_151650'
-    testData='/home/osboxes/Desktop/Z_sharedFolder/ExpandSim/modifiedExperimentalData/'+exp_path+'/'+str(test_type[-1])+'_test{}'.format(case)+'.xlsx'
+    test_type, test_properties, sensprs = DAF.func_experimental_tests_parameters("../experimentalData/Tests Description.xlsx", case)
+    exp_path ='old_fab_18042022_172824'
+    testData='/home/osboxes/Desktop/RunOpenFoam/87_RTM_Experimental_Analysis/modifiedExperimentalData/'+exp_path+'/'+str(test_type[-1])+'_test{}'.format(case)+'.xlsx'
     data_exp = pd.read_excel(testData)
     time = data_exp['time']
     p_exp = np.array(data_exp[['s0','s1','s2','s3','s4']])
