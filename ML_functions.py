@@ -44,14 +44,14 @@ def ML_model_read_func (nnet, nnet_file, dataset, epoch, seed, noise, nnet_dir =
     device = th.device("cpu")
 
     if(nnet == 'resnet'):
-        model = nnet_file.ResNet18(img_channels=1, num_classes = 5).to(device)
+        model = nnet_file.ResNet18(img_channels=1, num_classes = 4).to(device)
         # model = ResNet_C_Github.ResNet50(num_classes = 5, channels= 1).to(device) 
     else:
         layers = 10
         growth = 24
         bottleneck = True
         reduce = 1.0
-        model = nnet_file.DenseNet3(layers, num_classes = 5, growth_rate = growth, reduction=reduce,
+        model = nnet_file.DenseNet3(layers, num_classes = 4, growth_rate = growth, reduction=reduce,
                                  bottleneck=bottleneck, dropRate=0.05).to(device)
 
     

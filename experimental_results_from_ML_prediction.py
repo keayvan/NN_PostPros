@@ -17,8 +17,7 @@ from sklearn.metrics import confusion_matrix
 import seaborn as sns
 
 # importing sys
-import sys
-sys.path.insert(0, '../')
+
 import DenseNet_C
 import ResNet_C
 
@@ -27,7 +26,7 @@ save_prob = False
 #########################################
 ##############Pytorch model##############
 #########################################
-nnet ="resnet"
+nnet ="densnet"
 # noise = "no_noise"
 noise = "LC"
 # noise = "2_uncertainty"
@@ -37,11 +36,11 @@ noise = "LC"
 
 
 
-dataset=2000
+dataset=3000
 seed=2
-epoch=921
+epoch=1000
 model = MLF.ML_model_read_func(nnet = nnet,
-                       nnet_file = ResNet_C,
+                       nnet_file = DenseNet_C,
                        dataset = dataset,
                        epoch = epoch,
                        seed = seed,
@@ -56,7 +55,7 @@ rt2=[50]
 rt3=[24,26,27,45,46,69]         
 rt4=[23,48,49,70,71,72] 
 
-rt=rt0+rt1+rt2+rt3+rt4
+rt=rt1+rt2+rt3+rt4
 p_exp_list = []
 n_rt = len(rt)
 n_classes = 4
@@ -65,9 +64,9 @@ real_type_list = []
 test_no_list = []
 probability_matrix  = np.zeros((n_rt, n_classes))
 for index,case in enumerate(rt):
-    test_type, test_properties, sensprs = DAF.func_experimental_tests_parameters("./experimentalData/Tests Description.xlsx", case)
-    exp_path ='exp_norm_07042022_151650'
-    testData='/home/osboxes/Desktop/Z_sharedFolder/ExpandSim/modifiedExperimentalData/'+exp_path+'/'+str(test_type[-1])+'_test{}'.format(case)+'.xlsx'
+    test_type, test_properties, sensprs = DAF.func_experimental_tests_parameters("../experimentalData/Tests Description.xlsx", case)
+    exp_path ='exp_norm_WORT0_modified_11042022_235609'
+    testData='/home/osboxes/Desktop/RunOpenFoam/87_RTM_Experimental_Analysis/modifiedExperimentalData/'+exp_path+'/'+str(test_type[-1])+'_test{}'.format(case)+'.xlsx'
     data_exp = pd.read_excel(testData)
     time = data_exp['time']
     p_exp = np.array(data_exp[['s0','s1','s2','s3','s4']])
@@ -93,15 +92,15 @@ for index,case in enumerate(rt):
 
 
     if(top_pred == 0):
-        RT_class=0
-    elif(top_pred==1):
         RT_class=1
-    elif(top_pred==2):
+    elif(top_pred==1):
         RT_class=2
-    elif(top_pred==3):
+    elif(top_pred==2):
         RT_class=3
-    elif(top_pred==4):
+    elif(top_pred==3):
         RT_class=4
+    # elif(top_pred==4):
+    #     RT_class=4
     
     RT_Class_list.append(RT_class)
     RT_Class_np = np.array(RT_Class_list)
@@ -114,7 +113,7 @@ for index,case in enumerate(rt):
 type_list =['type1','type2','type3', 'type4']
 confusion_mat= confusion_matrix(real_type_list, RT_Class_list, labels=np.unique(real_type_list))
 cm = pd.DataFrame(confusion_mat, np.array(type_list), np.array(type_list))
-cm.to_csv('./confusion_Matrix/conf_{}_{}.csv'.format(noise,epoch))
+cm.to_csv('../confusion_Matrix/conf_{}_{}.csv'.format(noise,epoch))
 sns.heatmap(cm, cmap= "YlGnBu", cbar=True, annot= True,
                 linewidth=0.5)
 
@@ -136,9 +135,9 @@ for i in range(len(test_no_list)):
 result = np.array((wrong_pred,wrong_real_type,wrong_pred_type))
 accuracy = len(correct_pred)/len(real_type_list)*100
 print("accuracy = "+ str(accuracy))
-output_dic = {'test_no':test_no_np, 'real': real_type_list, 'pred':RT_Class_np,"RT0_prob" : probability_matrix[:,0],"RT1_prob" : probability_matrix[:,1], "RT2_prob" : probability_matrix[:,2],"RT3_prob" : probability_matrix[:,3],"RT4_prob" : probability_matrix[:,4]}
+output_dic = {'test_no':test_no_np, 'real': real_type_list, 'pred':RT_Class_np,"RT1_prob" : probability_matrix[:,0],"RT2_prob" : probability_matrix[:,1], "RT3_prob" : probability_matrix[:,2],"RT4_prob" : probability_matrix[:,3]}
 output_DF = pd.DataFrame(output_dic)
-if save_prob == True:
+if save_prob:
     output_DF.to_excel("./probability/prediction_"+str(nnet)+"_"+str(noise)+"_"+str(dataset)+"_v"+str(seed)+"_epoch_"+str(epoch)+".xlsx")
 
 
